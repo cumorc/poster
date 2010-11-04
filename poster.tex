@@ -116,21 +116,30 @@ Selectivity for a specific feature increases by applying a bell-shaped weighting
 }
 \label{fig:pyramid}
 \end{figure}
-Observation: Layers can operate data-parallel.
+Observation: Layers could operate data-parallel.
         \end{block}
-        \begin{block}{Parallelization}
-The first principle in programming for massively parallel architectures is to use many threads that do the same operations (SIMD). The second principle is that main memory access is expensive and data that is processed by individual threads needs to be laid out with care for fast throughput. 
-\begin{description}
-\item[ Single Thread per Output] 
-We create one thread for every output pixel and each thread
-then reads a small area to interpolate over, effectively exploiting
-the caching hardware.
 
-\item [ Layers S2 and C2]
-The most time critical layer is S2.We partition the problem such that each block of threads operates on a
+        \begin{block}{Parallelization}
+We held onto the following
+\begin{description}
+\item[GPU-Programming Principles:]~
+	\begin{itemize}
+		\item \emph{SIMD:} Many threads doing the same operations
+		\item \emph{Caching:} Main memory access is expensive, requiring careful thread layout for fast throughput
+	\end{itemize}
+% The first principle in programming for massively parallel architectures is to use many threads that do the same operations (SIMD). The second principle is that main memory access is expensive and data that is processed by individual threads needs to be laid out with care for fast throughput. 
+\end{description}
+Applying those principles we emphasize the following results:
+\begin{description}
+\item[Single Thread per Output Pixel:]~\\
+A thread reads a small area to interpolate over and writes one pixel.\\
+$\Rightarrow$ exploits caching hardware effectively.
+
+\item[Layers S2 and C2:] (most time critical)\\
+We partition the problem such that each block of threads operates on a
 single patch and performs the convolution with one scale of the
 pyramid at all orientations. Blocks can run concurrently even if they do not execute the same code path. 
-Therefore, each block can easily handle a different patch size.We need $p$ (= number of patches) blocks, and the algorithm scales
+Therefore, each block can easily handle a different patch size. We need $p$ (= number of patches) blocks, and the algorithm scales
 with the number of processing units. \newline
 An additional, significant benefit is achieved by integrating the S2
 and C2 layer into the same kernel.
