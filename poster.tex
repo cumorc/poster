@@ -68,28 +68,45 @@ We present a massively parallel object recognition system based on a cortex-like
         \begin{block} {Feature Extraction Inspired by Visual Cortex}
         
 We built our system closely along the approved base object recognition model of
-Mutch\&Lowe~\cite{mutch06}. \newline
-In this model learning consists of two phases. A feature extraction
-phase, were we build up a feature dictionary out of a training image set. And a
-feature weighting phase, were we measures the similarities of all features
-to the training images.  Both phases use the same processing steps. \newline
-The processing pipeline is outlined in figure \ref{fig:pyramid}. A scale and shift invariant
-feature vector is computed for input images by two subsequent steps,
-measuring the response to Gabor filters (\textbf{S1} and \textbf{C1}), and to a set of feature
-patches (\textbf{S2} and \textbf{C2}).
-These two steps are similar in structure and consist of a simple layer~(S)
-and a complex layer~(C) each:\newline
+Mutch\&Lowe~\cite{mutch06}.
+
+\begin{description}
+% \item[Computation] of scale and shift invariant feature vector (as in fig. \ref{fig:pyramid}):
+% \begin{itemize}
+% \item  response to Gabor filters (\textbf{S1} and \textbf{C1}),
+% 	\item  response to set of feature	patches (\textbf{S2} and \textbf{C2}).
+% \end{itemize}
+% The processing pipeline is outlined in figure \ref{fig:pyramid}. A scale and shift invariant
+% feature vector is computed for input images by two subsequent steps,
+% measuring the response to Gabor filters (\textbf{S1} and \textbf{C1}), and to a set of feature
+% patches (\textbf{S2} and \textbf{C2}).
+
+\item[Learning:]~
+\begin{itemize}
+	\item  \emph{feature extraction} out of training images
+	\item  \emph{feature weighting}: similarity of features to training images
+	\item  \emph{SVM training} with obtained feature vector
+\end{itemize}
+
+
+\item[Classification:]~
+\begin{itemize}
+	\item  \emph{feature weighting}: similarity of features to test image
+	\item  \emph{SVM classification} with obtained feature vector
+\end{itemize}
+
+\item[Feature Vector Computation:]~ %(biologically inspired)
+% Feature extraction weighting and consist of biologically inspired layers:
 \begin{itemize}
 \item
-S-layers compute convolutions with templates or patches. The
-selectivity for a specific feature is increased by applying a
-bell-shaped weighting curve to the resulting
-response.
-\item C-layers performs non-linear reduction, namely maximum
+\emph{S-layers:} Convolution with templates (Gabor) or patches.
+Selectivity for a specific feature increases by applying a bell-shaped weighting curve to the resulting response.
+\item \emph{C-layers:} non-linear reduction, namely maximum
   extraction over an area or an entire pyramid followed by
-  sub-sampling. They reduce the amount of information and establish
-  scale and shift invariance.\newline
+  sub-sampling. Reduces the amount of information and establishes
+ scale and shift invariance.\newline
 \end{itemize}
+\end{description}
 
 \begin{figure}[tb]
 \centering
@@ -99,6 +116,7 @@ response.
 }
 \label{fig:pyramid}
 \end{figure}
+Observation: Layers can operate data-parallel.
         \end{block}
         \begin{block}{Parallelization}
 The first principle in programming for massively parallel architectures is to use many threads that do the same operations (SIMD). The second principle is that main memory access is expensive and data that is processed by individual threads needs to be laid out with care for fast throughput. 
@@ -199,7 +217,7 @@ recently published GPU cortex simulator framework~(CNS)~\cite{mutch10} in classi
         \end{block}
         
         \begin{block}{Mobile Real Time Application}
-        The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro.      
+        The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro.   \newline     
         \end{block}
         
         \begin{block}{References}
