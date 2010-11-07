@@ -159,16 +159,16 @@ and C2 layer into the same kernel.
 the organization of the data flow to reduce bandwidth utilization
 between CPU and GPU memory, as well as on the GPU itself. Some of them are
 \begin{description}
-\item[ Main Memory to GPU Transfer ] 
+\item[ Main Memory to GPU Transfer: ] 
 Reduced to a minimum by implementing the entire processing pipeline on the GPU.\\
 % Upload: input image, download: feature vector
 % One needs to upload the input image and the patch
 % dictionary  and finally retrieve the compressed C2
 % vector. Beyond that, 
 % no intermediate results will be transferred.  
-\item[ Texture Cached Read-Only Access]
+\item[ Texture Cached Read-Only Access:]
 In all layers, we used GPU texturing unit which provides cached access to arrays (1D, 2D) and allows for automatic boundary handling.
-\item [ Image Pyramid Data Structure]
+\item [ Image Pyramid Data Structure:]
 Separate 2D textures for each pyramid and pyramid scale are tedious and inflexible to program in CUDA.
 We used a only one sliding 2D-texture over multiple kernel calls. Even with this overhead it is $\approx 50\%$ faster.
 % Separate 2D textures are slow, tedious, inflexible in CUDA.\\
@@ -192,46 +192,49 @@ We used a only one sliding 2D-texture over multiple kernel calls. Even with this
 
 
         \begin{block}{Results}
-We compare our system with both the CPU reference implementation~(FHLib) of Mutch\&Lowe~\cite{mutch06} and their
-recently published GPU cortex simulator framework~(CNS)~\cite{mutch10} in classification rate (table \ref{table:caltech}) and speed (figure \ref{fig:performance})
-\newline
-\begin{table}[t]
-  \begin{center}
-
-    \label{table:caltech}
-    \begin{tabular}{|l|r|r|r|}
-     \hline
-      Model & Impl. & 15 i./cat. & 30 i./cat.\\
-      \hline
-     % \midrule[\heavyrulewidth]
-      Serre et al. \cite{serre05}                          & CPU & 35\% & 42\% \\ %\midrule 
-		 
-      Mutch\&Lowe Base Model (FHLib) \cite{mutch06}      & CPU & 33\% & 41\%\\ %\midrule 
-      Mutch et al. Base Model  (CNS-FHLib) \cite{mutch10} & GPU & 29\%  & 37\%\\ %\midrule 
-      Our implementation                     & GPU & 37\% & 46\%\\
-      \hline
-      %\bottomrule
-    \end{tabular}
-        \caption{ Classification rates on the Caltech 101 dataset
-      with varying number of training images per category~(i./cat.). 
-      The results are averaged over  8 independent runs.  The performance of CNS is not directly
-      comparable as it omits the data transformation before calling the SVM.
-    }
-  \end{center}
-\end{table}
-
-\begin{figure}[htb]
-  \centering
-  %\begin{tabular}{cc}
-    \includegraphics[width=.8\linewidth]{images/PNumTime_max} \\
-  %  \includegraphics[width=\linewidth]{images/SizeTime_max} 
-  %\end{tabular}
-  \caption{ Our systems competes well against the recent GPU
-    implementation of the CNS-FHLib (CNS-GPU) on the Caltech 101 database. 
-    The big initial gap might be explained by some overhead, that comes along
-    with the Matlab Framework CNS-GPU uses. }
-  \label{fig:performance}
-\end{figure}
+				\begin{description}
+				\item[ 	Correctness: ]
+ We achieve classification rates comparable to reference implementations~\cite{mutch06,mutch10}:				
+				\begin{figure}[htb]
+				  \centering
+				  %\begin{tabular}{cc}
+				    \includegraphics[scale=2]{images/PNumAcry_min} 
+				\end{figure}
+		\item[ 	Performance: ]
+	Implementation is vastly faster than CPU reference implementation~\cite{mutch06} and faster than Mutch's recent GPU cortex simulator framework~(CNS)~\cite{mutch10}:
+		\begin{figure}[htb]
+		  \centering
+		    \includegraphics[scale=2]{images/PNumTime_max} 
+		\end{figure}
+		\end{description}
+	 % to both the CPU reference implementation~(FHLib) of Mutch\&Lowe~\cite{mutch06} and their recently published GPU cortex simulator framework~(CNS)~\cite{mutch10}.
+% We compare our system with both the CPU reference implementation~(FHLib) of Mutch\&Lowe~\cite{mutch06} and their
+% recently published GPU cortex simulator framework~(CNS)~\cite{mutch10} in classification rate (table \ref{table:caltech}) and speed (figure \ref{fig:performance})
+% \newline
+% \begin{table}[t]
+%   \begin{center}
+% 
+%     \label{table:caltech}
+%     \begin{tabular}{|l|r|r|r|}
+%      \hline
+%       Model & Impl. & 15 i./cat. & 30 i./cat.\\
+%       \hline
+%      % \midrule[\heavyrulewidth]
+%       Serre et al. \cite{serre05}                          & CPU & 35\% & 42\% \\ %\midrule 
+% 		 
+%       Mutch\&Lowe Base Model (FHLib) \cite{mutch06}      & CPU & 33\% & 41\%\\ %\midrule 
+%       Mutch et al. Base Model  (CNS-FHLib) \cite{mutch10} & GPU & 29\%  & 37\%\\ %\midrule 
+%       Our implementation                     & GPU & 37\% & 46\%\\
+%       \hline
+%       %\bottomrule
+%     \end{tabular}
+%         \caption{ Classification rates on the Caltech 101 dataset
+%       with varying number of training images per category~(i./cat.). 
+%       The results are averaged over  8 independent runs.  The performance of CNS is not directly
+%       comparable as it omits the data transformation before calling the SVM.
+%     }
+%   \end{center}
+% \end{table}
         \end{block}
         
         \begin{block}{Mobile Real Time Application}
