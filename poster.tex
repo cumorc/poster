@@ -53,7 +53,7 @@
   
 \begin{document}
 
-  \begin{frame}{} 
+  \begin{frame}{}
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 %%%%%%%%%%%%%%%%%%%1. Spalte %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,8 @@
         \begin{column}{.48\linewidth}
             \begin{block}{Abstract}
 
-We present a massively parallel object recognition system based on a cortex-like structure. Due to its nature, this general, biologically motivated system can be parallelized efficiently on recent many-core graphics processing units (GPU). By implementing the entire pipeline on the GPU, by rigorously optimizing memory bandwidth and by minimizing branch divergence, we achieve significant speedup compared to both recent CPU as well as GPU implementations for reasonably sized feature dictionaries. We demonstrate an interactive application even on a less powerful laptop which is able to classify webcam images and to learn novel categories in real time.\newline
+\emph{We present a massively parallel object recognition system based on a cortex-like structure. Due to its nature, this general, biologically motivated system can be parallelized efficiently on recent many-core graphics processing units (GPU). By implementing the entire pipeline on the GPU, by rigorously optimizing memory bandwidth and by minimizing branch divergence, we achieve significant speedup compared to both recent CPU as well as GPU implementations for reasonably sized feature dictionaries. We demonstrate an interactive application even on a less powerful laptop which is able to classify webcam images and to learn novel categories in real time.
+}\newline
         \end{block}
         
         \begin{block} {Feature Extraction Inspired by Visual Cortex}
@@ -116,11 +117,11 @@ Selectivity for a specific feature increases by applying a bell-shaped weighting
 }
 \label{fig:pyramid}
 \end{figure}
-Observation: Layers could operate data-parallel.
+\emph{Observation:} Layers operate mostly data-parallel $\Rightarrow$ suits GPU comp.\newline
         \end{block}
 
         \begin{block}{Parallelization}
-We held onto the following
+% We held onto the following
 \begin{description}
 \item[GPU-Programming Principles:]~
 	\begin{itemize}
@@ -146,7 +147,6 @@ and C2 layer into the same kernel.
 
         \end{block}        
         
-        
       \end{column}
       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
@@ -171,6 +171,7 @@ In all layers, we used GPU texturing unit which provides cached access to arrays
 \item [ Image Pyramid Data Structure:]
 Separate 2D textures for each pyramid and pyramid scale are tedious and inflexible to program in CUDA.
 We used a only one sliding 2D-texture over multiple kernel calls. Even with this overhead it is $\approx 50\%$ faster.
+\newline
 % Separate 2D textures are slow, tedious, inflexible in CUDA.\\
 % Memory efficient storage of pyramids using 2D textures requires to
 % create an extra texture for each pyramid scale. Managing several
@@ -188,7 +189,7 @@ We used a only one sliding 2D-texture over multiple kernel calls. Even with this
 % faster than multiple textures in one kernel.\newline
 \end{description}
         \end{block}
-
+				
 
 
         \begin{block}{Results}
@@ -206,6 +207,13 @@ We used a only one sliding 2D-texture over multiple kernel calls. Even with this
 		  \centering
 		    \includegraphics[scale=2]{images/PNumTime_max} 
 		\end{figure}
+		\item[Mobile Real Time Application]
+		The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in a 2008' Apple Macbook Pro.\\[.5em]
+		    					\begin{figure}[htb]
+ 							    	\centering
+	     					    \includegraphics[width=.6666\linewidth]{images/HS_2010-03-15_225559} \\
+	     					\end{figure}
+
 		\end{description}
 	 % to both the CPU reference implementation~(FHLib) of Mutch\&Lowe~\cite{mutch06} and their recently published GPU cortex simulator framework~(CNS)~\cite{mutch10}.
 % We compare our system with both the CPU reference implementation~(FHLib) of Mutch\&Lowe~\cite{mutch06} and their
@@ -236,20 +244,20 @@ We used a only one sliding 2D-texture over multiple kernel calls. Even with this
 %   \end{center}
 % \end{table}
         \end{block}
-        
-        \begin{block}{Mobile Real Time Application}
-	
-					\begin{figure}[htb]
-					  \centering
-					  %\begin{tabular}{cc}
-					    \includegraphics[width=.6666\linewidth]{images/HS_2010-03-15_225559} \\
-					  %  \includegraphics[width=\linewidth]{images/SizeTime_max} 
-					  %\end{tabular}
-					  \caption{ The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro. }
-					  \label{fig:performance}
-					\end{figure}
-        % The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro.   \newline     
-        \end{block}
+        					% 
+        					%         \begin{block}{Mobile Real Time Application}
+        					% 	
+        					% \begin{figure}[htb]
+        					%   \centering
+        					%   %\begin{tabular}{cc}
+        					%     \includegraphics[width=.6666\linewidth]{images/HS_2010-03-15_225559} \\
+        					%   %  \includegraphics[width=\linewidth]{images/SizeTime_max} 
+        					%   %\end{tabular}
+        					%   \caption{ The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro. }
+        					%   \label{fig:performance}
+        					% \end{figure}
+        					%         % The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro.   \newline     
+        					%         \end{block}
         
         \begin{block}{References}
         \tiny
