@@ -13,9 +13,9 @@
 %Metainfo
 \usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}  % e.g. custom size poster
   \title[]{}
-  \author[]{Helmut Sedding and Ferdinand Deger}
-  \institute[]{Institute of Media Informatics, University Ulm}
-  \date{Jul. 31th, 2007}
+  \author[]{Helmut Sedding, Ferdinand Deger, Holger Dammertz, Jan Bouecke, Hendrik P.\,A.\ Lensch}
+  \institute[]{Ulm University}
+  \date{}
 
 
 % Page-Header-logo.pdf is 10" x 0.42"
@@ -30,8 +30,13 @@
    \begin{tikzpicture}[overlay]
     % \node [gray] at (-50.5,7.25) {\veryHuge Massively Parallel  };
     %\node [gray] at (-50.5,3.25) {\veryHuge Multiclass Object Recognition};
-    \node [black] at (-50,7.25) {\veryHuge Massively Parallel  };
-     \node [black] at (-50,3.25) {\veryHuge Multiclass Object Recognition};
+
+    % \node [black] at (-50,7.25) {\veryHuge Massively Parallel  };
+    % \node [black] at (-50,3.25) {\veryHuge Multiclass Object Recognition};
+
+    \node [black] at (-50,8) {\huge Massively Parallel Multiclass Object Recognition };
+     \node [black] at (-50,4) {\large {\insertauthor{}}};
+     \node [black] at (-50,1.75) {\large \emph{\insertinstitute{}}};
    \end{tikzpicture}
 }
 
@@ -41,8 +46,8 @@
   \leavevmode
    \pgfuseimage{Page-Footer}
    \begin{tikzpicture}[overlay]
-    \node [black] at (-35,3.2) {\large \bf{\insertauthor{}}, \insertinstitute{}};
-    \node [black] at (-35,1.8) {\large helmut$@$sedding.net,  ferdinand.deger$@$gmail.com,  http://github.com/cumorc/cumorc};
+    % \node [black] at (-35,3.2) {\large \bf{\insertauthor{}}, \insertinstitute{}};
+    \node [black] at (-35,2.75) {\large helmut$@$sedding.net,  ferdinand.deger$@$gmail.com,  http://github.com/cumorc/cumorc};
    \end{tikzpicture}
 }
 
@@ -117,7 +122,7 @@ Selectivity for a specific feature increases by applying a bell-shaped weighting
 }
 \label{fig:pyramid}
 \end{figure}
-\emph{Observation:} Layers operate mostly data-parallel $\Rightarrow$ suits GPU comp.\newline
+\emph{Obs.:} Layers operate mostly data-parallel $\Rightarrow$ suits GPU computation.\newline
         \end{block}
 
         \begin{block}{Parallelization}
@@ -170,7 +175,7 @@ Reduced to a minimum by implementing the entire processing pipeline on the GPU.\
 In all layers, we used GPU texturing unit which provides cached access to arrays (1D, 2D) and allows for automatic boundary handling.
 \item [ Image Pyramid Data Structure:]
 Separate 2D textures for each pyramid and pyramid scale are tedious and inflexible to program in CUDA.
-We used a only one sliding 2D-texture over multiple kernel calls. Even with this overhead it is $\approx 50\%$ faster.
+We used a only one sliding 2D-texture over multiple kernel calls. Even with the kernel call overhead it is $\approx 50\%$ faster.
 \newline
 % Separate 2D textures are slow, tedious, inflexible in CUDA.\\
 % Memory efficient storage of pyramids using 2D textures requires to
@@ -260,8 +265,8 @@ We used a only one sliding 2D-texture over multiple kernel calls. Even with this
         					%         \end{block}
         
         \begin{block}{References}
-        \tiny
-	\bibliographystyle{abbrv}
+        % \tiny
+	\bibliographystyle{unsrt}
 	\bibliography{egbib}
 	\end{block}
 	
