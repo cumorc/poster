@@ -129,17 +129,15 @@ We held onto the following
 	\end{itemize}
 % The first principle in programming for massively parallel architectures is to use many threads that do the same operations (SIMD). The second principle is that main memory access is expensive and data that is processed by individual threads needs to be laid out with care for fast throughput. 
 \end{description}
-Applying those principles we emphasize the following results:
+Applying those principles we emphasize the following design decisions:
 \begin{description}
 \item[Single Thread per Output Pixel:]~\\
 A thread reads a small area to interpolate over and writes one pixel.\\
 $\Rightarrow$ exploits caching hardware effectively.
 
 \item[Layers S2 and C2:] (most time critical)\\
-We partition the problem such that each block of threads operates on a
-single patch and performs the convolution with one scale of the
-pyramid at all orientations. Blocks can run concurrently even if they do not execute the same code path. 
-Therefore, each block can easily handle a different patch size. We need $p$ (= number of patches) blocks, and the algorithm scales
+We partition the problem such that each block of threads operates on one patch and performs the convolution scale by scale at all orientations. \nesline
+While threads operate in lock-step, blocks can run concurrently even if they do not execute the same code path. Therefore, each thread block can easily run differently sized loops, easily allowing different patch sizes. We need $p$ (= number of patches) blocks, and the algorithm scales
 with the number of processing units. \newline
 An additional, significant benefit is achieved by integrating the S2
 and C2 layer into the same kernel.
@@ -162,21 +160,32 @@ the organization of the data flow to reduce bandwidth utilization
 between CPU and GPU memory, as well as on the GPU itself. Some of them are
 \begin{description}
 \item[ Main Memory to GPU Transfer ] 
-We reduce the amount to a minimum by
-implementing the entire pipeline on the GPU. One needs to upload the input image and the patch
-dictionary  and finally retrieve the compressed C2
-vector. Beyond that, no intermediate results will be transferred.  
+Reduced to a minimum by implementing the entire processing pipeline on the GPU.\\
+% Upload: input image, download: feature vector
+% One needs to upload the input image and the patch
+% dictionary  and finally retrieve the compressed C2
+% vector. Beyond that, 
+% no intermediate results will be transferred.  
 \item[ Texture Cached Read-Only Access]
-The texturing unit of graphics processors provides a cached data access
-on arrays and allows for automatic boundary handling
+In all layers, we used GPU texturing unit which provides cached access to arrays (1D, 2D) and allows for automatic boundary handling.
 \item [ Image Pyramid Data Structure]
-Memory efficient storage of pyramids using 2D textures requires to
-create an extra texture for each pyramid scale. Managing several
-texture references is currently tedious and inflexible in CUDA.  This
-problem can be alleviated by using only a single texture reference and
-using multiple kernel calls that each process a single scale.  Even
-though calling a kernel imposes some overhead this is about 50\%
-faster than multiple textures in one kernel.\newline
+Separate 2D textures for each pyramid and pyramid scale are tedious and inflexible to program in CUDA.
+We used a only one sliding 2D-texture over multiple kernel calls. Even with this overhead it is $\approx 50\%$ faster.
+% Separate 2D textures are slow, tedious, inflexible in CUDA.\\
+% Memory efficient storage of pyramids using 2D textures requires to
+% create an extra texture for each pyramid scale. Managing several
+% texture references is currently tedious and inflexible in CUDA.  This
+% problem can be alleviated by using only a single texture reference and
+% using multiple kernel calls that each process a single scale.  Even
+% though calling a kernel imposes some overhead this is about 50\%
+% faster than multiple textures in one kernel.\newline
+% Memory efficient storage of pyramids using 2D textures requires to
+% create an extra texture for each pyramid scale. Managing several
+% texture references is currently tedious and inflexible in CUDA.  This
+% problem can be alleviated by using only a single texture reference and
+% using multiple kernel calls that each process a single scale.  Even
+% though calling a kernel imposes some overhead this is about 50\%
+% faster than multiple textures in one kernel.\newline
 \end{description}
         \end{block}
 
@@ -214,7 +223,7 @@ recently published GPU cortex simulator framework~(CNS)~\cite{mutch10} in classi
 \begin{figure}[htb]
   \centering
   %\begin{tabular}{cc}
-    \includegraphics[width=\linewidth]{images/PNumTime_max} \\
+    \includegraphics[width=.8\linewidth]{images/PNumTime_max} \\
   %  \includegraphics[width=\linewidth]{images/SizeTime_max} 
   %\end{tabular}
   \caption{ Our systems competes well against the recent GPU
@@ -226,7 +235,17 @@ recently published GPU cortex simulator framework~(CNS)~\cite{mutch10} in classi
         \end{block}
         
         \begin{block}{Mobile Real Time Application}
-        The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro.   \newline     
+	
+					\begin{figure}[htb]
+					  \centering
+					  %\begin{tabular}{cc}
+					    \includegraphics[width=.6666\linewidth]{images/HS_2010-03-15_225559} \\
+					  %  \includegraphics[width=\linewidth]{images/SizeTime_max} 
+					  %\end{tabular}
+					  \caption{ The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro. }
+					  \label{fig:performance}
+					\end{figure}
+        % The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in an Apple Macbook Pro.   \newline     
         \end{block}
         
         \begin{block}{References}
@@ -234,6 +253,8 @@ recently published GPU cortex simulator framework~(CNS)~\cite{mutch10} in classi
 	\bibliographystyle{abbrv}
 	\bibliography{egbib}
 	\end{block}
+	
+	
 	
        \end{column}
     \end{columns}
