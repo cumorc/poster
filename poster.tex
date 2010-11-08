@@ -90,14 +90,14 @@ Mutch\&Lowe~\cite{mutch06}.
 \item[Learning:]~
 \begin{itemize}
 	\item  \emph{feature extraction} out of training images
-	\item  \emph{feature weighting}: similarity of features to training images
+	\item  \emph{feature weighting}: measure similarity of features to training images
 	\item  \emph{SVM training} with obtained feature vector
 \end{itemize}
 
 
 \item[Classification:]~
 \begin{itemize}
-	\item  \emph{feature weighting}: similarity of features to test image
+	\item  \emph{feature weighting}: measure similarity of features to test image
 	\item  \emph{SVM classification} with obtained feature vector
 \end{itemize}
 
@@ -116,7 +116,7 @@ Selectivity for a specific feature increases by applying a bell-shaped weighting
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=.7\linewidth]{images/pyramidp}
+\includegraphics[width=.7\linewidth]{images/pyramidq}
 \caption{
   Hierarchical feature extraction and weighting pipeline.
 }
@@ -143,7 +143,7 @@ $\Rightarrow$ exploits caching hardware effectively.
 
 \item[Layers S2 and C2:] (most time critical)\\
 We partition the problem such that each block of threads operates on one patch and performs the convolution scale by scale at all orientations. \nesline
-While threads operate in lock-step, blocks can run concurrently even if they do not execute the same code path. Therefore, each thread block can easily run differently sized loops, easily allowing different patch sizes. We need $p$ (= number of patches) blocks, and the algorithm scales
+While threads operate in lock-step, blocks can run concurrently even if they do not execute the same code path. Therefore, each thread block can easily run differently sized loops, allowing for different patch size processing. We need $p$ (= number of patches) blocks, and the algorithm scales
 with the number of processing units. \newline
 An additional, significant benefit is achieved by integrating the S2
 and C2 layer into the same kernel.
@@ -162,7 +162,7 @@ and C2 layer into the same kernel.
         \begin{block}{Memory Structure}
           Important design decisions have to be made for the data structures and
 the organization of the data flow to reduce bandwidth utilization
-between CPU and GPU memory, as well as on the GPU itself. Some of them are
+between CPU and GPU memory, and within the GPU. Some of them are
 \begin{description}
 \item[ Main Memory to GPU Transfer: ] 
 Reduced to a minimum by implementing the entire processing pipeline on the GPU.\\
@@ -172,7 +172,7 @@ Reduced to a minimum by implementing the entire processing pipeline on the GPU.\
 % vector. Beyond that, 
 % no intermediate results will be transferred.  
 \item[ Texture Cached Read-Only Access:]
-In all layers, we used GPU texturing unit which provides cached access to arrays (1D, 2D) and allows for automatic boundary handling.
+In all layers, we used GPU texturing units which provide cached access to arrays (1D, 2D) and allow for automatic boundary handling.
 \item [ Image Pyramid Data Structure:]
 Separate 2D textures for each pyramid and pyramid scale are tedious and inflexible to program in CUDA.
 We used a only one sliding 2D-texture over multiple kernel calls. Even with the kernel call overhead it is $\approx 50\%$ faster.
@@ -200,17 +200,19 @@ We used a only one sliding 2D-texture over multiple kernel calls. Even with the 
         \begin{block}{Results}
 				\begin{description}
 				\item[ 	Correctness: ]
- We achieve classification rates comparable to reference implementations~\cite{mutch06,mutch10}:				
+We achieve classification rates comparable to Mutch\&Lowe's reference implementation~\cite{mutch06}, here on Caltech-101:
 				\begin{figure}[htb]
 				  \centering
 				  %\begin{tabular}{cc}
-				    \includegraphics[scale=2]{images/PNumAcry_min} 
+			    % \includegraphics[scale=2]{images/PNumAcry_min} 
+			    \includegraphics[scale=2.25]{images/accuracy} 
 				\end{figure}
 		\item[ 	Performance: ]
-	Implementation is vastly faster than CPU reference implementation~\cite{mutch06} and faster than Mutch's recent GPU cortex simulator framework~(CNS)~\cite{mutch10}:
+	Our GPU implementation in CUDA is vastly faster than the CPU reference implementation~\cite{mutch06} and faster than Mutch's recent GPU cortex simulator framework~(CNS)~\cite{mutch10}:
 		\begin{figure}[htb]
 		  \centering
-		    \includegraphics[scale=2]{images/PNumTime_max} 
+	    % \includegraphics[scale=2]{images/PNumTime_max} 
+	    \includegraphics[scale=2.25]{images/speed} 
 		\end{figure}
 		\item[Mobile Real Time Application]
 		The significant speedup, especially for moderate numbers of patches, allows us to address real-time object recognition even on small mobile GPUs such as a low end NVIDIA Geforce 9400M in a 2008' Apple Macbook Pro.\\[.5em]
